@@ -28,7 +28,7 @@ Planificado (`routine_items`) y realizado (`set_logs`) se guardan separados; el 
 3. Horarios.
 4. Registro de sesiones + gráficas de progreso.
 5. Landing pública, planes Free/Pro, Stripe (test).
-6. Hardening, tests, CI, escaneo de dependencias.
+6. Hardening: MFA (TOTP) para el entrenador, CSP con nonce, tests, CI, escaneo de dependencias.
 
 ## Seguridad (meta: OWASP ASVS L2)
 - RLS en todas las tablas: el alumno solo accede a sus filas (evita IDOR).
