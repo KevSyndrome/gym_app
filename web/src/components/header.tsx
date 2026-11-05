@@ -50,10 +50,15 @@ export function Header({
             ))}
           </nav>
         </div>
-        <form action={signOut} className="flex items-center gap-4">
-          <span className="hidden text-sm text-muted md:inline">
-            {name} ({role === "trainer" ? "entrenador" : "alumno"})
-          </span>
+        <form action={signOut} className="flex items-center gap-2">
+          <Link
+            href="/perfil"
+            aria-current={current === "/perfil" ? "page" : undefined}
+            className={`btn btn-ghost btn-sm ${current === "/perfil" ? "text-primary" : "text-muted"}`}
+          >
+            <span className="max-w-40 truncate">{name}</span>
+            <span className="hidden md:inline">({role === "trainer" ? "entrenador" : "alumno"})</span>
+          </Link>
           <button className="btn btn-outline btn-sm">Cerrar sesión</button>
         </form>
       </div>

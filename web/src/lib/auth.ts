@@ -15,7 +15,7 @@ export async function requireUser(role?: Role) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, email, full_name, role, plan")
+    .select("id, email, full_name, role, plan, avatar_path")
     .eq("id", user.id)
     .single();
   if (!profile) redirect("/login");

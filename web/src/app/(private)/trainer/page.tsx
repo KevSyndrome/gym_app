@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { Avatar } from "@/components/avatar";
 import { Header } from "@/components/header";
 import { requireUser } from "@/lib/auth";
+import { avatarUrls } from "@/lib/avatars";
 import { AccessLinkButton } from "./access-link-button";
 import { setPlan } from "./actions";
 import { InviteForm } from "./invite-form";
@@ -9,9 +11,10 @@ export default async function TrainerPage() {
   const { supabase, profile } = await requireUser("trainer");
   const { data: students } = await supabase
     .from("profiles")
-    .select("id, email, full_name, plan, routines(id, name)")
+    .select("id, email, full_name, plan, avatar_path, routines(id, name)")
     .eq("role", "student")
     .order("full_name");
+  const avatars = await avatarUrls(supabase, students?.map((s) => s.avatar_path) ?? []);
 
   return (
     <>
@@ -28,6 +31,8 @@ export default async function TrainerPage() {
                 const routine = s.routines[0];
                 return (
                   <li key={s.id} className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex min-w-0 gap-3">
+                    <Avatar name={s.full_name || s.email} url={avatars.get(s.avatar_path ?? "")} />
                     <div className="min-w-0">
                       <p className="truncate font-medium">{s.full_name || "Sin nombre"}</p>
                       <p className="truncate text-sm text-muted">{s.email}</p>
@@ -45,6 +50,7 @@ export default async function TrainerPage() {
                         )}
                       </p>
                       <AccessLinkButton studentId={s.id} />
+                    </div>
                     </div>
                     <form action={setPlan} className="flex shrink-0 items-center gap-2">
                       <input type="hidden" name="student_id" value={s.id} />

@@ -43,6 +43,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_path: string | null
           created_at: string
           email: string
           full_name: string
@@ -51,6 +52,7 @@ export type Database = {
           role: string
         }
         Insert: {
+          avatar_path?: string | null
           created_at?: string
           email: string
           full_name?: string
@@ -59,6 +61,7 @@ export type Database = {
           role?: string
         }
         Update: {
+          avatar_path?: string | null
           created_at?: string
           email?: string
           full_name?: string
@@ -163,6 +166,10 @@ export type Database = {
     }
     Functions: {
       choose_template: { Args: { template_id: string }; Returns: string }
+      update_my_profile: {
+        Args: { new_avatar_path: string; new_full_name: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
