@@ -1,6 +1,6 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Wordmark } from "@/components/header";
 import { createClient } from "@/lib/supabase/client";
 
@@ -9,6 +9,8 @@ export default function LoginPage() {
   const linkError = useSearchParams().get("error");
   const [error, setError] = useState(linkError ? "El enlace no es válido o expiró." : "");
   const [pending, setPending] = useState(false);
+  // false en el HTML del servidor, true al hidratar: evita enviar el formulario antes de que cargue el JS.
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   // Se loguea desde el navegador para que el límite de intentos de Supabase cuente por IP del usuario.
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -31,17 +33,17 @@ export default function LoginPage() {
       <div className="flex flex-col gap-2">
         <h1 className="title">Iniciar sesión</h1>
       </div>
-      <form onSubmit={onSubmit} className="flex flex-col gap-4">
-        <label className="label">
+      <form method="post" onSubmit={onSubmit} className="flex flex-col gap-4">
+        <label className="flex flex-col gap-1.5 text-sm text-muted">
           Correo
-          <input name="email" type="email" required autoComplete="email" className="input" />
+          <input name="email" type="email" required autoComplete="email" className="input w-full" />
         </label>
-        <label className="label">
+        <label className="flex flex-col gap-1.5 text-sm text-muted">
           Contraseña
-          <input name="password" type="password" required autoComplete="current-password" className="input" />
+          <input name="password" type="password" required autoComplete="current-password" className="input w-full" />
         </label>
-        {error && <p role="alert" className="text-danger">{error}</p>}
-        <button disabled={pending} className="btn mt-2">
+        {error && <p role="alert" className="text-error">{error}</p>}
+        <button disabled={pending || !hydrated} className="btn btn-primary mt-2">
           {pending ? "Entrando…" : "Entrar"}
         </button>
       </form>
