@@ -57,7 +57,7 @@ export default function SignupPage() {
         <>
           <div className="flex flex-col gap-2">
             <h1 className="title">Crea tu cuenta gratis</h1>
-            <p className="text-muted">Plan Free: eliges una rutina y llevas tu seguimiento. Puedes pasarte a Pro cuando quieras.</p>
+            <p className="text-muted">Plan gratuito: eliges una rutina y llevas tu seguimiento. Puedes pasarte a Pro cuando quieras.</p>
           </div>
           {/* method=post: si se envía antes de cargar el JS, los datos no van en la URL. */}
           <form method="post" onSubmit={onSubmit} className="flex flex-col gap-4">

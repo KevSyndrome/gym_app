@@ -18,7 +18,7 @@ export default async function ProfilePage() {
           <div>
             <h1 className="title">Tu perfil</h1>
             <p className="text-muted">
-              {profile.email}. {role === "trainer" ? "Entrenador." : `Alumno, plan ${profile.plan === "pro" ? "Pro" : "Free"}.`}
+              {profile.email}. {role === "trainer" ? "Entrenador." : `Alumno, plan ${profile.plan === "pro" ? "Pro" : "gratuito"}.`}
             </p>
           </div>
         </div>

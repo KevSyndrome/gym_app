@@ -45,9 +45,9 @@ export default async function RoutinesPage(props: PageProps<"/trainer/routines">
             {list(personal, "Ningún alumno tiene rutina todavía.")}
           </section>
           <section>
-            <h2 className="font-display text-2xl font-bold">Plantillas del plan Free</h2>
-            <p className="mb-3 text-sm text-muted">Los alumnos Free eligen una de estas y la siguen por su cuenta.</p>
-            {list(templates, "No hay plantillas. Crea una para que los alumnos Free puedan elegir.")}
+            <h2 className="font-display text-2xl font-bold">Plantillas del plan gratuito</h2>
+            <p className="mb-3 text-sm text-muted">Los alumnos del plan gratuito eligen una de estas y la siguen por su cuenta.</p>
+            {list(templates, "No hay plantillas. Crea una para que los alumnos del plan gratuito puedan elegir.")}
           </section>
         </section>
         <RoutineForm students={withoutRoutine.map((s) => ({ id: s.id, name: s.full_name || s.email }))} preselected={typeof alumno === "string" ? alumno : undefined} />

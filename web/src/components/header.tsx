@@ -12,11 +12,15 @@ export function Wordmark() {
 const NAV = {
   trainer: [
     { href: "/trainer", label: "Alumnos" },
+    { href: "/trainer/agenda", label: "Agenda" },
     { href: "/trainer/routines", label: "Rutinas" },
     { href: "/trainer/exercises", label: "Ejercicios" },
+    { href: "/trainer/catalogos", label: "Catálogos" },
   ],
   student: [
-    { href: "/student", label: "Mi semana" },
+    { href: "/student", label: "Hoy" },
+    { href: "/student/registrar", label: "Registrar" },
+    { href: "/student/progreso", label: "Progreso" },
     { href: "/student/plantillas", label: "Elegir rutina", freeOnly: true },
   ],
 };
@@ -37,7 +41,7 @@ export function Header({
       <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-3">
         <div className="flex items-center gap-6">
           <Wordmark />
-          <nav className="flex gap-1" aria-label="Secciones">
+          <nav className="flex flex-wrap gap-1" aria-label="Secciones">
             {NAV[role].filter((item) => !("freeOnly" in item) || plan === "free").map((item) => (
               <Link
                 key={item.href}
