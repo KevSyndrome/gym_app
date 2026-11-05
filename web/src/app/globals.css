@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "daisyui" {
   themes: false;
+  /* join genera un selector anidado relativo que el compilador CSS de Turbopack rechaza; no lo usamos. */
+  exclude: join;
 }
 
 /* Carbón + naranja de disco de pesas. Solo tema oscuro. */

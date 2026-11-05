@@ -24,6 +24,13 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // El dev server arranca como localhost; sin esto la recarga en caliente falla en 127.0.0.1.
   allowedDevOrigins: ["127.0.0.1"],
+  // Imágenes de ejercicios de hasta 2 MB + margen del multipart.
+  experimental: {
+    serverActions: { bodySizeLimit: "2.1mb" },
+    // Casi todo depende de la sesión: validar "navegación instantánea" solo donde se pida con `instant`.
+    instantInsights: { validationLevel: "manual-warning" },
+  },
+  images: { remotePatterns: supabase ? [new URL(`${supabase}/storage/v1/object/public/exercise-images/**`)] : [] },
   turbopack: {
     rules: {
       "*.css": {

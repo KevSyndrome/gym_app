@@ -2,14 +2,14 @@
 
 ## Decisiones
 - Plataforma: web responsive / PWA.
-- Stack: Next.js (TypeScript) + Supabase (Auth, Postgres con RLS, Storage).
+- Stack: Next.js (TypeScript) + Supabase (Auth, Postgres con RLS, Storage) + Tailwind/daisyUI (tema propio "gym").
 - Un solo entrenador.
 - Pagos: Stripe en modo test (gratis, sin cobros reales) hasta salir a producción.
 
 ## Roles
 - **Entrenador**: registra alumnos (por invitación), horarios, rutinas (ejercicio, descripción, imagen, sets, reps, peso), ve progreso.
 - **Alumno Pro**: ve su rutina semanal resumida; registra sus sesiones autónomas.
-- **Alumno Free**: elige rutinas genéricas publicadas.
+- **Alumno Free**: se registra solo, elige una rutina plantilla (se copia como suya) y lleva su seguimiento sin entrenador.
 
 ## Modelo de datos (borrador)
 - `profiles` (id = auth.users.id, nombre, rol: trainer|student, plan: free|pro)
@@ -27,6 +27,11 @@ Planificado (`routine_items`) y realizado (`set_logs`) se guardan separados; el 
   Al tenerlo, volver a la plantilla con `token_hash` verificada en servidor en vez del flujo con `#hash` (`/auth/accept`).
 - **Recuperar contraseña**: no existe todavía.
 
+## Estado
+- Fase 1 (auth, roles, invitación): hecha.
+- Fase 2 (ejercicios, rutinas, vista del alumno, plantillas Free, portada con planes): hecha. El registro público
+  existe pero está cerrado hasta tener SMTP (confirmación de correo).
+
 ## Fases
 1. Auth, roles, invitación de alumnos.
 2. Ejercicios + rutinas + vista del alumno.
@@ -38,7 +43,7 @@ Planificado (`routine_items`) y realizado (`set_logs`) se guardan separados; el 
 ## Seguridad (meta: OWASP ASVS L2)
 - RLS en todas las tablas: el alumno solo accede a sus filas (evita IDOR).
 - Login con límite de intentos; MFA para el entrenador.
-- Validación de entrada en servidor (zod); imágenes: tipo real, tamaño máximo, bucket privado con URLs firmadas.
+- Validación de entrada en servidor (zod); imágenes de ejercicios: firma real del archivo (JPG/PNG/WEBP), máx. 2 MB, bucket público de lectura (no son datos personales) y escritura solo del entrenador.
 - Cabeceras de seguridad (CSP, HSTS), secretos solo en variables de entorno.
 - Sin datos de tarjeta en nuestro sistema (Stripe Checkout); webhooks verificados por firma.
 - Datos de salud/progreso = datos personales: cumplir ley de protección de datos local.

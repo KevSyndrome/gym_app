@@ -16,6 +16,7 @@ npx supabase link --project-ref <ref>
 npx supabase db push --remote   # aplica supabase/migrations
 npx supabase config push        # auth: registro cerrado, contraseña >= 12, MFA
 npm run test:db                 # pruebas de permisos (RLS), no dejan datos
+npm run db:types                # regenera los tipos de la base tras cada migración
 node --env-file=.env.local scripts/create-trainer.mjs tu@correo.com "Tu nombre"
 npm run dev                     # http://127.0.0.1:3000
 ```

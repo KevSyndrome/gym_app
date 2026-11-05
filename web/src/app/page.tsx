@@ -8,7 +8,38 @@ const board = [
   { name: "Dominadas", plan: "3 × 6", done: "No la hizo: molestia en el hombro", changed: true },
 ];
 
-// shortcut: landing mínima; los planes Free/Pro y Stripe llegan en la fase 5.
+const PLANS = [
+  {
+    name: "Free",
+    price: "Gratis",
+    summary: "Para entrenar por tu cuenta con una rutina bien armada.",
+    features: [
+      "Eliges entre rutinas hechas por un entrenador",
+      "Ves tu semana día por día en el teléfono",
+      "Anotas tus series, pesos y lo que no pudiste hacer",
+    ],
+    cta: "Crear cuenta gratis",
+    href: "/registro",
+    featured: false,
+  },
+  {
+    name: "Pro",
+    // shortcut: precio y cobro en línea llegan con Stripe en la fase 5.
+    price: "Pago mensual",
+    summary: "Para entrenar con tu entrenador, también los días que no puede estar.",
+    features: [
+      "Rutina hecha a tu medida, con indicaciones por ejercicio",
+      "Horarios para entrenar con tu entrenador",
+      "Tu entrenador ve tu progreso y ajusta la rutina",
+      "Todo lo del plan Free",
+    ],
+    cta: "Empezar con Pro",
+    href: "/registro",
+    featured: true,
+    note: "Crea tu cuenta y tu entrenador activa Pro; el pago en línea llega pronto.",
+  },
+];
+
 export default function Home() {
   return (
     <>
@@ -17,7 +48,8 @@ export default function Home() {
         <Link href="/login" className="btn btn-outline btn-sm">Iniciar sesión</Link>
       </header>
 
-      <main className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 px-6 pb-16 pt-6 lg:grid-cols-[1fr_1.1fr]">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-6 pb-20">
+        <div className="grid items-center gap-12 pt-6 lg:grid-cols-[1fr_1.1fr]">
         <section className="max-w-xl">
           <h1 className="font-display text-6xl font-bold leading-[0.95] tracking-tight sm:text-7xl">
             Entrena con plan. Anota lo que de verdad hiciste.
@@ -27,8 +59,8 @@ export default function Home() {
             también los días que entrenas solo.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link href="/login" className="btn btn-primary btn-lg">Iniciar sesión</Link>
-            <p className="text-sm text-muted">¿Sin cuenta? Pídele a tu entrenador que te invite.</p>
+            <Link href="/registro" className="btn btn-primary btn-lg">Crear cuenta gratis</Link>
+            <a href="#planes" className="btn btn-ghost btn-lg">Ver planes</a>
           </div>
         </section>
 
@@ -59,6 +91,33 @@ export default function Home() {
             En naranja, lo que cambió respecto al plan. Tu entrenador lo ve en tu progreso.
           </p>
         </figure>
+        </div>
+
+        <section id="planes" className="mt-24 scroll-mt-8">
+          <h2 className="font-display text-5xl font-bold tracking-tight">Elige cómo entrenar</h2>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {PLANS.map((plan) => (
+              <article
+                key={plan.name}
+                className={`flex flex-col rounded-box border bg-base-200 p-6 sm:p-8 ${plan.featured ? "border-primary" : "border-base-300"}`}
+              >
+                <h3 className={`font-display text-4xl font-bold ${plan.featured ? "text-primary" : ""}`}>{plan.name}</h3>
+                <p className="mt-1 text-muted">{plan.price}</p>
+                <p className="mt-4">{plan.summary}</p>
+                <ul className="mt-5 flex flex-1 flex-col gap-2">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex gap-3">
+                      <span aria-hidden className="mt-2.5 h-0.5 w-3 shrink-0 bg-primary" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href={plan.href} className={`btn mt-8 ${plan.featured ? "btn-primary" : "btn-outline"}`}>{plan.cta}</Link>
+                {plan.note && <p className="mt-3 text-sm text-muted">{plan.note}</p>}
+              </article>
+            ))}
+          </div>
+        </section>
       </main>
     </>
   );
