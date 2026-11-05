@@ -24,5 +24,5 @@ export default function AcceptInvite() {
       .then(({ error }) => router.replace(error ? "/login?error=enlace" : "/set-password"));
   }, [router]);
 
-  return <main className="p-6" role="status">Validando invitación…</main>;
+  return <main className="flex flex-1 items-center justify-center p-6 text-muted" role="status">Validando tu invitación…</main>;
 }

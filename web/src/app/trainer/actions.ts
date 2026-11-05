@@ -10,7 +10,7 @@ const inviteSchema = z.object({
   full_name: z.string().trim().min(1).max(120),
 });
 
-export type InviteState = { error?: string; ok?: string };
+export type InviteState = { error?: string; ok?: string; link?: string };
 
 export async function inviteStudent(_prev: InviteState, formData: FormData): Promise<InviteState> {
   // Las server actions son endpoints públicos: se verifica el rol aquí, no solo en la página.
@@ -25,15 +25,18 @@ export async function inviteStudent(_prev: InviteState, formData: FormData): Pro
 
   // Next ya valida que Origin coincida con el host en server actions; Supabase además lo exige en su lista de redirecciones.
   const origin = (await headers()).get("origin");
-  const { data, error } = await createAdminClient().auth.admin.inviteUserByEmail(email, {
-    redirectTo: `${origin}/auth/accept`,
+  // shortcut: genera el enlace sin enviar correo; el entrenador lo comparte a mano. Con SMTP propio, enviarlo además.
+  const { data, error } = await createAdminClient().auth.admin.generateLink({
+    type: "invite",
+    email,
+    options: { redirectTo: `${origin}/auth/accept` },
   });
   if (error) {
-    return { error: error.code === "email_exists" ? "Ese correo ya está registrado." : "No se pudo enviar la invitación." };
+    return { error: error.code === "email_exists" ? "Ese correo ya tiene cuenta." : "No se pudo crear la invitación. Intenta de nuevo." };
   }
 
   // Con el cliente del entrenador: la política RLS es la que autoriza el cambio.
   await supabase.from("profiles").update({ full_name }).eq("id", data.user.id);
   revalidatePath("/trainer");
-  return { ok: `Invitación enviada a ${email}.` };
+  return { ok: `Invitación lista para ${full_name}. Mándale este enlace; vence en 1 hora.`, link: data.properties.action_link };
 }
