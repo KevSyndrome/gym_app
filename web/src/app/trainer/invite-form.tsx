@@ -7,34 +7,34 @@ export function InviteForm() {
   const [copied, setCopied] = useState(false);
 
   return (
-    <section className="flex flex-col gap-4 rounded-lg border border-line bg-surface p-5">
+    <section className="flex flex-col gap-4 rounded-lg border border-base-300 bg-base-200 p-5">
       <div>
         <h2 className="font-display text-2xl font-bold">Invitar alumno</h2>
         <p className="text-sm text-muted">Crea un enlace para que elija su contraseña y entre.</p>
       </div>
       <form action={action} className="flex flex-col gap-4">
-        <label className="label">
+        <label className="flex flex-col gap-1.5 text-sm text-muted">
           Nombre
-          <input name="full_name" required maxLength={120} className="input" />
+          <input name="full_name" required maxLength={120} className="input w-full" />
         </label>
-        <label className="label">
+        <label className="flex flex-col gap-1.5 text-sm text-muted">
           Correo
-          <input name="email" type="email" required maxLength={254} className="input" />
+          <input name="email" type="email" required maxLength={254} className="input w-full" />
         </label>
-        {state.error && <p role="alert" className="text-sm text-danger">{state.error}</p>}
-        <button disabled={pending} className="btn" onClick={() => setCopied(false)}>
+        {state.error && <p role="alert" className="text-sm text-error">{state.error}</p>}
+        <button disabled={pending} className="btn btn-primary" onClick={() => setCopied(false)}>
           {pending ? "Creando enlace…" : "Crear enlace de invitación"}
         </button>
       </form>
 
       {state.link && (
-        <div role="status" className="flex flex-col gap-3 border-t border-line pt-4">
+        <div role="status" className="flex flex-col gap-3 border-t border-base-300 pt-4">
           <p className="text-sm">{state.ok}</p>
           {/* El enlace da acceso a la cuenta: solo lo ve el entrenador y no se guarda. */}
-          <input readOnly value={state.link} aria-label="Enlace de invitación" className="input text-xs" onFocus={(e) => e.target.select()} />
+          <input readOnly value={state.link} aria-label="Enlace de invitación" className="input input-sm w-full" onFocus={(e) => e.target.select()} />
           <button
             type="button"
-            className="btn-ghost"
+            className="btn btn-outline btn-sm"
             onClick={() => navigator.clipboard.writeText(state.link!).then(() => setCopied(true))}
           >
             {copied ? "Enlace copiado" : "Copiar enlace"}

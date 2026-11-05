@@ -22,6 +22,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  // El dev server arranca como localhost; sin esto la recarga en caliente falla en 127.0.0.1.
+  allowedDevOrigins: ["127.0.0.1"],
   turbopack: {
     rules: {
       "*.css": {

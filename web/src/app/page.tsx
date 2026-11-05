@@ -14,7 +14,7 @@ export default function Home() {
     <>
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
         <Wordmark />
-        <Link href="/login" className="btn-ghost">Iniciar sesión</Link>
+        <Link href="/login" className="btn btn-outline btn-sm">Iniciar sesión</Link>
       </header>
 
       <main className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 px-6 pb-16 pt-6 lg:grid-cols-[1fr_1.1fr]">
@@ -27,19 +27,19 @@ export default function Home() {
             también los días que entrenas solo.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link href="/login" className="btn px-6 py-3 text-lg">Iniciar sesión</Link>
+            <Link href="/login" className="btn btn-primary btn-lg">Iniciar sesión</Link>
             <p className="text-sm text-muted">¿Sin cuenta? Pídele a tu entrenador que te invite.</p>
           </div>
         </section>
 
-        <figure className="rounded-lg border border-line bg-surface p-5 sm:p-7">
+        <figure className="rounded-lg border border-base-300 bg-base-200 p-5 sm:p-7">
           <figcaption className="mb-5 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
             <span className="font-display text-2xl font-bold">Martes, pierna y espalda</span>
             <span className="text-sm text-muted">Entrenó solo</span>
           </figcaption>
           <table className="w-full text-left">
             <thead className="text-sm text-muted">
-              <tr className="border-b border-line">
+              <tr className="border-b border-base-300">
                 <th className="pb-2 font-medium">Ejercicio</th>
                 <th className="pb-2 font-medium">Plan</th>
                 <th className="pb-2 font-medium">Hecho</th>
@@ -47,10 +47,10 @@ export default function Home() {
             </thead>
             <tbody className="font-display text-base sm:text-xl">
               {board.map((row) => (
-                <tr key={row.name} className="border-b border-line/60 last:border-0">
+                <tr key={row.name} className="border-b border-base-300/60 last:border-0">
                   <td className="py-3 pr-3 font-sans text-sm sm:text-base">{row.name}</td>
                   <td className="whitespace-nowrap py-3 pr-3 text-muted">{row.plan}</td>
-                  <td className={`py-3 ${row.done.length < 20 ? "whitespace-nowrap" : ""} ${row.changed ? "text-accent" : ""}`}>{row.done}</td>
+                  <td className={`py-3 ${row.done.length < 20 ? "whitespace-nowrap" : ""} ${row.changed ? "text-primary" : ""}`}>{row.done}</td>
                 </tr>
               ))}
             </tbody>

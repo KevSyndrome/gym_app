@@ -20,7 +20,7 @@ export default async function TrainerPage() {
             <span className="text-muted">{students?.length ?? 0}</span>
           </div>
           {students?.length ? (
-            <ul className="divide-y divide-line rounded-lg border border-line">
+            <ul className="divide-y divide-base-300 rounded-lg border border-base-300">
               {students.map((s) => (
                 <li key={s.id} className="flex items-center justify-between gap-4 px-4 py-3">
                   <div className="min-w-0">
@@ -28,9 +28,7 @@ export default async function TrainerPage() {
                     <p className="truncate text-sm text-muted">{s.email}</p>
                   </div>
                   <span
-                    className={`shrink-0 rounded px-2 py-0.5 text-sm font-semibold ${
-                      s.plan === "pro" ? "bg-accent text-bg" : "border border-line text-muted"
-                    }`}
+                    className={`badge shrink-0 ${s.plan === "pro" ? "badge-primary" : "badge-outline text-muted"}`}
                   >
                     {s.plan === "pro" ? "Pro" : "Free"}
                   </span>
@@ -38,7 +36,7 @@ export default async function TrainerPage() {
               ))}
             </ul>
           ) : (
-            <div className="rounded-lg border border-dashed border-line px-6 py-10 text-center">
+            <div className="rounded-lg border border-dashed border-base-300 px-6 py-10 text-center">
               <p className="font-medium">Todavía no tienes alumnos.</p>
               <p className="mt-1 text-sm text-muted">Crea un enlace de invitación y mándaselo por WhatsApp o correo.</p>
             </div>

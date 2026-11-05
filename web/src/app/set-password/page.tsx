@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Wordmark } from "@/components/header";
 import { createClient } from "@/lib/supabase/client";
 
@@ -10,6 +10,8 @@ export default function SetPasswordPage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  // false en el HTML del servidor, true al hidratar: evita enviar el formulario antes de que cargue el JS.
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -33,17 +35,17 @@ export default function SetPasswordPage() {
         <h1 className="title">Elige tu contraseña</h1>
         <p className="text-muted">Con ella entrarás de ahora en adelante.</p>
       </div>
-      <form onSubmit={onSubmit} className="flex flex-col gap-4">
-        <label className="label">
+      <form method="post" onSubmit={onSubmit} className="flex flex-col gap-4">
+        <label className="flex flex-col gap-1.5 text-sm text-muted">
           Contraseña (mínimo {MIN} caracteres)
-          <input name="password" type="password" required minLength={MIN} maxLength={128} autoComplete="new-password" className="input" />
+          <input name="password" type="password" required minLength={MIN} maxLength={128} autoComplete="new-password" className="input w-full" />
         </label>
-        <label className="label">
+        <label className="flex flex-col gap-1.5 text-sm text-muted">
           Repite la contraseña
-          <input name="confirm" type="password" required minLength={MIN} maxLength={128} autoComplete="new-password" className="input" />
+          <input name="confirm" type="password" required minLength={MIN} maxLength={128} autoComplete="new-password" className="input w-full" />
         </label>
-        {error && <p role="alert" className="text-danger">{error}</p>}
-        <button disabled={pending} className="btn mt-2">
+        {error && <p role="alert" className="text-error">{error}</p>}
+        <button disabled={pending || !hydrated} className="btn btn-primary mt-2">
           {pending ? "Guardando…" : "Guardar y entrar"}
         </button>
       </form>

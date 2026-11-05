@@ -13,7 +13,7 @@ export default async function StudentPage() {
         <p className="mt-2 text-muted">
           Plan {profile.plan === "pro" ? "Pro: rutina personalizada por tu entrenador." : "Free: rutinas generales para elegir."}
         </p>
-        <section className="mt-8 rounded-lg border border-dashed border-line px-6 py-10 text-center">
+        <section className="mt-8 rounded-lg border border-dashed border-base-300 px-6 py-10 text-center">
           <h2 className="font-display text-2xl font-bold">Tu semana</h2>
           <p className="mt-1 text-sm text-muted">Aquí verás tu rutina día por día en cuanto tu entrenador la publique.</p>
         </section>
