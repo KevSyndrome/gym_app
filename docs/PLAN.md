@@ -25,12 +25,16 @@ Planificado (`routine_items`) y realizado (`set_logs`) se guardan separados; el 
 ## Pendientes de infraestructura
 - **SMTP propio** (o la API de correo del usuario): hoy el entrenador copia el enlace de invitación y lo comparte a mano; con SMTP se enviará además por correo y en español.
   Al tenerlo, volver a la plantilla con `token_hash` verificada en servidor en vez del flujo con `#hash` (`/auth/accept`).
-- **Recuperar contraseña**: no existe todavía.
+- **Recuperar contraseña por correo**: no existe todavía (el entrenador puede dar un "Nuevo enlace de acceso").
+- **Registro sin confirmación de correo** (shortcut temporal): cualquiera puede registrarse con un correo que no es suyo.
+  Al conectar SMTP: `enable_confirmations = true` en config.toml y `config push`.
+- **Cambio de correo** desde el perfil: requiere confirmación por correo, llega con SMTP.
 
 ## Estado
 - Fase 1 (auth, roles, invitación): hecha.
 - Fase 2 (ejercicios, rutinas, vista del alumno, plantillas Free, portada con planes): hecha. El registro público
-  existe pero está cerrado hasta tener SMTP (confirmación de correo).
+  está abierto sin confirmación de correo (ver pendientes).
+- Perfil (entrenador y alumno): nombre, foto (bucket privado, URLs firmadas) y contraseña (pide la actual): hecho.
 
 ## Fases
 1. Auth, roles, invitación de alumnos.

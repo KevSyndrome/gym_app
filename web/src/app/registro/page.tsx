@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
 import { Wordmark } from "@/components/header";
 import { createClient } from "@/lib/supabase/client";
@@ -7,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 const MIN = 12; // igual que minimum_password_length en supabase/config.toml
 
 export default function SignupPage() {
+  const router = useRouter();
   const [error, setError] = useState("");
   const [sentTo, setSentTo] = useState("");
   const [pending, setPending] = useState(false);
@@ -17,7 +19,7 @@ export default function SignupPage() {
     const form = new FormData(e.currentTarget);
     const email = String(form.get("email"));
     setPending(true);
-    const { error } = await createClient().auth.signUp({
+    const { data, error } = await createClient().auth.signUp({
       email,
       password: String(form.get("password")),
       options: {
@@ -26,9 +28,16 @@ export default function SignupPage() {
       },
     });
     setPending(false);
+    // Sin confirmación de correo, Supabase devuelve la sesión al tiro; con confirmación, hay que revisar el correo.
+    if (!error && data.session) {
+      router.replace("/panel");
+      return router.refresh();
+    }
     if (!error) return setSentTo(email);
     setError(
-      error.code === "signup_disabled"
+      error.code === "user_already_exists"
+        ? "Ese correo ya tiene cuenta. Inicia sesión."
+        : error.code === "signup_disabled"
         ? "El registro abre pronto. Mientras tanto, pídele a tu entrenador un enlace de invitación."
         : error.code === "weak_password"
           ? `Usa al menos ${MIN} caracteres y evita contraseñas comunes o filtradas.`

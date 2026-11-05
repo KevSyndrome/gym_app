@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
+import { readImage } from "@/lib/images";
 import { MUSCLE_GROUPS } from "@/lib/routine";
 import { createAdminClient } from "@/lib/supabase/server";
 
@@ -77,15 +78,6 @@ export async function setPlan(formData: FormData) {
   revalidatePath("/trainer");
 }
 
-const IMAGE_TYPES: Record<string, { ext: string; magic: (b: Uint8Array) => boolean }> = {
-  "image/jpeg": { ext: "jpg", magic: (b) => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
-  "image/png": { ext: "png", magic: (b) => b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47 },
-  "image/webp": {
-    ext: "webp",
-    magic: (b) => String.fromCharCode(...b.slice(0, 4)) === "RIFF" && String.fromCharCode(...b.slice(8, 12)) === "WEBP",
-  },
-};
-const MAX_IMAGE = 2 * 1024 * 1024;
 
 const exerciseSchema = z.object({ name: text(80).min(1), muscle_group: z.enum(MUSCLE_GROUPS), description: text(2000) });
 
@@ -101,13 +93,10 @@ export async function createExercise(_prev: FormState, formData: FormData): Prom
   let image_path: string | null = null;
   const file = formData.get("image");
   if (file instanceof File && file.size > 0) {
-    if (file.size > MAX_IMAGE) return { error: "La imagen pesa más de 2 MB." };
-    // El tipo que declara el navegador no basta: se comprueba la firma real del archivo.
-    const type = IMAGE_TYPES[file.type];
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    if (!type || !type.magic(bytes)) return { error: "La imagen debe ser JPG, PNG o WEBP." };
-    image_path = `${crypto.randomUUID()}.${type.ext}`;
-    const { error } = await supabase.storage.from("exercise-images").upload(image_path, bytes, { contentType: file.type });
+    const image = await readImage(file);
+    if ("error" in image) return { error: image.error };
+    image_path = `${crypto.randomUUID()}.${image.ext}`;
+    const { error } = await supabase.storage.from("exercise-images").upload(image_path, image.bytes, { contentType: image.type });
     if (error) return { error: "No se pudo subir la imagen. Intenta de nuevo." };
   }
 
