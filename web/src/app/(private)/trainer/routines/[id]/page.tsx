@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/header";
 import { RoutineWeek } from "@/components/routine-week";
 import { requireUser } from "@/lib/auth";
-import { getRoutines } from "@/lib/routine";
+import { getCatalog, getRoutines } from "@/lib/routine";
 import { deleteItem, deleteRoutine } from "../../actions";
 import { AddItemForm } from "./add-item-form";
 
@@ -12,9 +12,10 @@ export default async function RoutinePage(props: PageProps<"/trainer/routines/[i
   const { id } = await props.params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
-  const [[routine], { data: exercises }] = await Promise.all([
+  const [[routine], { data: exercises }, groups] = await Promise.all([
     getRoutines(supabase, { id }),
     supabase.from("exercises").select("id, name, muscle_group").order("name"),
+    getCatalog(supabase, "muscle_groups"),
   ]);
   if (!routine) notFound();
   const { data: student } = routine.student_id
@@ -30,7 +31,7 @@ export default async function RoutinePage(props: PageProps<"/trainer/routines/[i
             <Link href="/trainer/routines" className="link text-sm text-muted">Rutinas</Link>
             <h1 className="title mt-1">{routine.name}</h1>
             <p className="mt-2 text-muted">
-              {student ? `Rutina de ${student.full_name || student.email}` : "Plantilla del plan Free"}
+              {student ? `Rutina de ${student.full_name || student.email}` : "Plantilla del plan gratuito"}
             </p>
             {routine.description && <p className="mt-2 max-w-prose">{routine.description}</p>}
           </div>
@@ -53,7 +54,7 @@ export default async function RoutinePage(props: PageProps<"/trainer/routines/[i
             </p>
           </form>
         </section>
-        <AddItemForm routineId={routine.id} exercises={exercises ?? []} />
+        <AddItemForm routineId={routine.id} exercises={exercises ?? []} groups={groups} />
       </main>
     </>
   );

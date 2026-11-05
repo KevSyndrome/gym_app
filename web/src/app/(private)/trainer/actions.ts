@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { readImage } from "@/lib/images";
-import { MUSCLE_GROUPS } from "@/lib/routine";
 import { createAdminClient } from "@/lib/supabase/server";
 
 // Las server actions son endpoints públicos: cada una verifica el rol y valida su entrada.
@@ -75,17 +74,24 @@ export async function setPlan(formData: FormData) {
   if (!parsed.success) return;
   // shortcut: el entrenador activa Pro a mano; con Stripe (fase 5) lo hará el pago.
   await supabase.from("profiles").update({ plan: parsed.data.plan }).eq("id", parsed.data.student_id).eq("role", "student");
-  revalidatePath("/trainer");
+  revalidatePath("/trainer", "layout");
 }
 
 
-const exerciseSchema = z.object({ name: text(80).min(1), muscle_group: z.enum(MUSCLE_GROUPS), description: text(2000) });
+// Grupo y equipo los valida la base (llaves foráneas a los catálogos).
+const exerciseSchema = z.object({
+  name: text(80).min(1),
+  muscle_group: text(40).min(1),
+  equipment: text(40).transform((v) => v || null),
+  description: text(2000),
+});
 
 export async function createExercise(_prev: FormState, formData: FormData): Promise<FormState> {
   const { supabase } = await requireUser("trainer");
   const parsed = exerciseSchema.safeParse({
     name: formData.get("name"),
     muscle_group: formData.get("muscle_group"),
+    equipment: formData.get("equipment") ?? "",
     description: formData.get("description") ?? "",
   });
   if (!parsed.success) return { error: "Revisa el nombre y el grupo muscular." };
@@ -103,7 +109,11 @@ export async function createExercise(_prev: FormState, formData: FormData): Prom
   const { error } = await supabase.from("exercises").insert({ ...parsed.data, image_path });
   if (error) {
     if (image_path) await supabase.storage.from("exercise-images").remove([image_path]);
-    return { error: error.code === "23505" ? "Ya existe un ejercicio con ese nombre." : "No se pudo guardar el ejercicio." };
+    return {
+      error: error.code === "23505" ? "Ya existe un ejercicio con ese nombre."
+        : error.code === "23503" ? "Ese grupo muscular o equipo ya no existe en el catálogo."
+        : "No se pudo guardar el ejercicio.",
+    };
   }
   revalidatePath("/trainer/exercises");
   return { ok: `${parsed.data.name} agregado al catálogo.` };
@@ -191,4 +201,54 @@ export async function deleteItem(formData: FormData) {
   if (!parsed.success) return;
   await supabase.from("routine_items").delete().eq("id", parsed.data.item_id);
   revalidatePath(`/trainer/routines/${parsed.data.routine_id}`);
+}
+
+const slotSchema = z.object({
+  student_id: id,
+  day: z.coerce.number().int().min(1).max(7),
+  start_time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+  duration_min: z.coerce.number().int().min(15).max(240),
+  notes: text(200),
+});
+
+export async function addSlot(_prev: FormState, formData: FormData): Promise<FormState> {
+  const { supabase } = await requireUser("trainer");
+  const parsed = slotSchema.safeParse({ ...Object.fromEntries(formData), notes: formData.get("notes") ?? "" });
+  if (!parsed.success) return { error: "Revisa el día, la hora y la duración (15 a 240 minutos)." };
+  const { error } = await supabase.from("training_slots").insert(parsed.data);
+  if (error) return { error: "No se pudo guardar el horario." };
+  revalidatePath(`/trainer/alumnos/${parsed.data.student_id}`);
+  return { ok: "Horario agregado." };
+}
+
+export async function deleteSlot(formData: FormData) {
+  const { supabase } = await requireUser("trainer");
+  const parsed = z.object({ slot_id: id, student_id: id }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return;
+  await supabase.from("training_slots").delete().eq("id", parsed.data.slot_id);
+  revalidatePath(`/trainer/alumnos/${parsed.data.student_id}`);
+}
+
+const catalogTable = z.enum(["muscle_groups", "equipment", "skip_reasons"]);
+
+export async function addCatalogItem(_prev: FormState, formData: FormData): Promise<FormState> {
+  const { supabase } = await requireUser("trainer");
+  const parsed = z.object({ table: catalogTable, name: text(80).min(1) }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "Escribe un nombre." };
+  const { table, name } = parsed.data;
+  const value = table === "skip_reasons" ? name : name.toLowerCase();
+  const { error } = await supabase.from(table).insert({ name: value, position: 100 });
+  if (error) return { error: error.code === "23505" ? "Ya existe." : error.code === "23514" ? "Nombre demasiado largo." : "No se pudo agregar." };
+  revalidatePath("/trainer/catalogos");
+  return { ok: `"${value}" agregado.` };
+}
+
+export async function deleteCatalogItem(_prev: FormState, formData: FormData): Promise<FormState> {
+  const { supabase } = await requireUser("trainer");
+  const parsed = z.object({ table: catalogTable, name: text(80).min(1) }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "No válido." };
+  const { error } = await supabase.from(parsed.data.table).delete().eq("name", parsed.data.name);
+  if (error) return { error: error.code === "23503" ? "Hay ejercicios que lo usan: cámbialos primero." : "No se pudo borrar." };
+  revalidatePath("/trainer/catalogos");
+  return {};
 }

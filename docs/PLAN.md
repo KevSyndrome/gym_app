@@ -35,6 +35,14 @@ Planificado (`routine_items`) y realizado (`set_logs`) se guardan separados; el 
 - Fase 2 (ejercicios, rutinas, vista del alumno, plantillas Free, portada con planes): hecha. El registro público
   está abierto sin confirmación de correo (ver pendientes).
 - Perfil (entrenador y alumno): nombre, foto (bucket privado, URLs firmadas) y contraseña (pide la actual): hecho.
+- Fase 3 (horarios): horarios semanales por alumno Pro y agenda del entrenador: hecho.
+- Fase 4 (registro y progreso): el alumno registra hoy o días pasados (Pro: con entrenador / no llegó / sin
+  entrenador; gratuito: sin entrenador); el entrenador registra por el alumno y ve su historial plan vs. hecho: hecho.
+- Catálogos editables: grupos musculares, equipo y motivos para no hacer un ejercicio: hecho.
+- Pendiente: gráficas de progreso por ejercicio; zona horaria configurable (`NEXT_PUBLIC_TIME_ZONE`, por defecto
+  America/Mexico_City).
+- Bug conocido de Next 16.4: si un formulario se envía sin JS y la acción devuelve error, Next registra un
+  InvariantError de cookies al re-renderizar (la respuesta llega bien). Con JS no ocurre.
 
 ## Fases
 1. Auth, roles, invitación de alumnos.

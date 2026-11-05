@@ -3,7 +3,17 @@ import type { Database } from "@/lib/database.types";
 
 export const DAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"] as const;
 
-export const MUSCLE_GROUPS = ["pecho", "espalda", "piernas", "hombros", "brazos", "core", "cuerpo completo"] as const;
+export const CATALOGS = {
+  muscle_groups: "Grupos musculares",
+  equipment: "Equipo",
+  skip_reasons: "Motivos para no hacer un ejercicio",
+} as const;
+export type CatalogTable = keyof typeof CATALOGS;
+
+export async function getCatalog(supabase: SupabaseClient<Database>, table: CatalogTable) {
+  const { data } = await supabase.from(table).select("name").order("position").order("name");
+  return (data ?? []).map((r) => r.name);
+}
 
 export type RoutineItem = {
   id: string;

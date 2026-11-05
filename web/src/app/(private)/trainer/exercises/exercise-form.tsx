@@ -1,9 +1,8 @@
 "use client";
 import { useActionState } from "react";
-import { MUSCLE_GROUPS } from "@/lib/routine";
 import { createExercise, deleteExercise, type FormState } from "../actions";
 
-export function ExerciseForm() {
+export function ExerciseForm({ groups, equipment }: { groups: string[]; equipment: string[] }) {
   const [state, action, pending] = useActionState<FormState, FormData>(createExercise, {});
   return (
     <section className="flex flex-col gap-4 rounded-box border border-base-300 bg-base-200 p-5 md:sticky md:top-6">
@@ -17,8 +16,17 @@ export function ExerciseForm() {
           Grupo muscular
           <select name="muscle_group" required className="select w-full capitalize" defaultValue="">
             <option value="" disabled>Elige uno</option>
-            {MUSCLE_GROUPS.map((g) => (
+            {groups.map((g) => (
               <option key={g} value={g}>{g}</option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm text-muted">
+          Equipo
+          <select name="equipment" className="select w-full capitalize" defaultValue="">
+            <option value="">Sin especificar</option>
+            {equipment.map((e) => (
+              <option key={e} value={e}>{e}</option>
             ))}
           </select>
         </label>

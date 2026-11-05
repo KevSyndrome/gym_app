@@ -1,15 +1,16 @@
 import Image from "next/image";
 import { Header } from "@/components/header";
 import { requireUser } from "@/lib/auth";
-import { MUSCLE_GROUPS, imageUrl } from "@/lib/routine";
+import { getCatalog, imageUrl } from "@/lib/routine";
 import { DeleteExerciseButton, ExerciseForm } from "./exercise-form";
 
 export default async function ExercisesPage() {
   const { supabase, profile } = await requireUser("trainer");
-  const { data: exercises } = await supabase
-    .from("exercises")
-    .select("id, name, muscle_group, description, image_path")
-    .order("name");
+  const [{ data: exercises }, groups, equipment] = await Promise.all([
+    supabase.from("exercises").select("id, name, muscle_group, equipment, description, image_path").order("name"),
+    getCatalog(supabase, "muscle_groups"),
+    getCatalog(supabase, "equipment"),
+  ]);
 
   return (
     <>
@@ -20,7 +21,7 @@ export default async function ExercisesPage() {
             <h1 className="title">Ejercicios</h1>
             <span className="text-muted">{exercises?.length ?? 0}</span>
           </div>
-          {MUSCLE_GROUPS.map((group) => {
+          {groups.map((group) => {
             const list = exercises?.filter((e) => e.muscle_group === group) ?? [];
             if (!list.length) return null;
             return (
@@ -37,7 +38,7 @@ export default async function ExercisesPage() {
                           <div className="size-14 shrink-0 rounded-field bg-base-200" aria-hidden />
                         )}
                         <div className="min-w-0 flex-1">
-                          <p className="font-medium">{e.name}</p>
+                          <p className="font-medium">{e.name}{e.equipment && <span className="ml-2 text-sm font-normal text-muted">{e.equipment}</span>}</p>
                           <p className="line-clamp-2 text-sm text-muted">{e.description || "Sin descripción."}</p>
                         </div>
                         <DeleteExerciseButton exerciseId={e.id} name={e.name} />
@@ -49,7 +50,7 @@ export default async function ExercisesPage() {
             );
           })}
         </section>
-        <ExerciseForm />
+        <ExerciseForm groups={groups} equipment={equipment} />
       </main>
     </>
   );

@@ -11,7 +11,7 @@ export function RoutineForm({ students, preselected }: { students: { id: string;
         <label className="flex flex-col gap-1.5 text-sm text-muted">
           Para
           <select name="student_id" className="select w-full" defaultValue={preselected ?? "template"}>
-            <option value="template">Plantilla para el plan Free</option>
+            <option value="template">Plantilla para el plan gratuito</option>
             {students.map((s) => (
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}

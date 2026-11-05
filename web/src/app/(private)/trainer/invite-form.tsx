@@ -10,7 +10,7 @@ export function InviteForm() {
     <section className="flex flex-col gap-4 rounded-box border border-base-300 bg-base-200 p-5">
       <div>
         <h2 className="font-display text-2xl font-bold">Invitar alumno</h2>
-        <p className="text-sm text-muted">Crea un enlace para que elija su contraseña y entre. Empieza en plan Free.</p>
+        <p className="text-sm text-muted">Crea un enlace para que elija su contraseña y entre. Empieza en el plan gratuito.</p>
       </div>
       <form action={action} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1.5 text-sm text-muted">

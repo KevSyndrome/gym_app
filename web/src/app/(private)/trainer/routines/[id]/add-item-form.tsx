@@ -1,11 +1,11 @@
 "use client";
 import { useActionState } from "react";
-import { DAYS, MUSCLE_GROUPS } from "@/lib/routine";
+import { DAYS } from "@/lib/routine";
 import { addItem, type FormState } from "../../actions";
 
 type Exercise = { id: string; name: string; muscle_group: string };
 
-export function AddItemForm({ routineId, exercises }: { routineId: string; exercises: Exercise[] }) {
+export function AddItemForm({ routineId, exercises, groups }: { routineId: string; exercises: Exercise[]; groups: string[] }) {
   const [state, action, pending] = useActionState<FormState, FormData>(addItem, {});
   return (
     <section className="flex flex-col gap-4 rounded-box border border-base-300 bg-base-200 p-5 md:sticky md:top-6">
@@ -24,7 +24,7 @@ export function AddItemForm({ routineId, exercises }: { routineId: string; exerc
           Ejercicio
           <select name="exercise_id" required className="select w-full" defaultValue="">
             <option value="" disabled>Elige uno</option>
-            {MUSCLE_GROUPS.map((g) => (
+            {groups.map((g) => (
               <optgroup key={g} label={g}>
                 {exercises.filter((e) => e.muscle_group === g).map((e) => (
                   <option key={e.id} value={e.id}>{e.name}</option>

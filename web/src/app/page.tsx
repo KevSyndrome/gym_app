@@ -10,7 +10,7 @@ const board = [
 
 const PLANS = [
   {
-    name: "Free",
+    name: "Gratuito",
     price: "Gratis",
     summary: "Para entrenar por tu cuenta con una rutina bien armada.",
     features: [
@@ -31,7 +31,7 @@ const PLANS = [
       "Rutina hecha a tu medida, con indicaciones por ejercicio",
       "Horarios para entrenar con tu entrenador",
       "Tu entrenador ve tu progreso y ajusta la rutina",
-      "Todo lo del plan Free",
+      "Todo lo del plan gratuito",
     ],
     cta: "Empezar con Pro",
     href: "/registro",
