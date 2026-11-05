@@ -22,13 +22,18 @@
 
 Planificado (`routine_items`) y realizado (`set_logs`) se guardan separados; el progreso es la comparación.
 
+## Pendientes de infraestructura
+- **SMTP propio** (Brevo, Resend, etc.): necesario para invitar alumnos reales y para personalizar el correo.
+  Al tenerlo, volver a la plantilla con `token_hash` verificada en servidor en vez del flujo con `#hash` (`/auth/accept`).
+- **Recuperar contraseña**: no existe todavía.
+
 ## Fases
 1. Auth, roles, invitación de alumnos.
 2. Ejercicios + rutinas + vista del alumno.
 3. Horarios.
 4. Registro de sesiones + gráficas de progreso.
 5. Landing pública, planes Free/Pro, Stripe (test).
-6. Hardening, tests, CI, escaneo de dependencias.
+6. Hardening: MFA (TOTP) para el entrenador, CSP con nonce, tests, CI, escaneo de dependencias.
 
 ## Seguridad (meta: OWASP ASVS L2)
 - RLS en todas las tablas: el alumno solo accede a sus filas (evita IDOR).
