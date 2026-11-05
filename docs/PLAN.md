@@ -23,7 +23,7 @@
 Planificado (`routine_items`) y realizado (`set_logs`) se guardan separados; el progreso es la comparación.
 
 ## Pendientes de infraestructura
-- **SMTP propio** (Brevo, Resend, etc.): necesario para invitar alumnos reales y para personalizar el correo.
+- **SMTP propio** (o la API de correo del usuario): hoy el entrenador copia el enlace de invitación y lo comparte a mano; con SMTP se enviará además por correo y en español.
   Al tenerlo, volver a la plantilla con `token_hash` verificada en servidor en vez del flujo con `#hash` (`/auth/accept`).
 - **Recuperar contraseña**: no existe todavía.
 

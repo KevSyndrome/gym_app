@@ -12,23 +12,36 @@ export default async function TrainerPage() {
 
   return (
     <>
-      <Header name={profile.full_name || profile.email} />
-      <main className="mx-auto grid w-full max-w-4xl gap-6 p-6 md:grid-cols-[1fr_20rem]">
+      <Header name={profile.full_name || profile.email} role="trainer" />
+      <main className="mx-auto grid w-full max-w-5xl items-start gap-8 px-6 py-8 md:grid-cols-[1fr_22rem]">
         <section>
-          <h1 className="mb-4 text-2xl font-bold">Alumnos</h1>
+          <div className="mb-5 flex items-baseline gap-3">
+            <h1 className="title">Alumnos</h1>
+            <span className="text-muted">{students?.length ?? 0}</span>
+          </div>
           {students?.length ? (
-            <ul className="divide-y rounded border">
+            <ul className="divide-y divide-line rounded-lg border border-line">
               {students.map((s) => (
-                <li key={s.id} className="flex justify-between p-3">
-                  <span>
-                    {s.full_name || "(sin nombre)"} <span className="text-sm opacity-70">{s.email}</span>
+                <li key={s.id} className="flex items-center justify-between gap-4 px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{s.full_name || "Sin nombre"}</p>
+                    <p className="truncate text-sm text-muted">{s.email}</p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded px-2 py-0.5 text-sm font-semibold ${
+                      s.plan === "pro" ? "bg-accent text-bg" : "border border-line text-muted"
+                    }`}
+                  >
+                    {s.plan === "pro" ? "Pro" : "Free"}
                   </span>
-                  <span className="text-sm uppercase">{s.plan}</span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p>Aún no tienes alumnos. Invita al primero.</p>
+            <div className="rounded-lg border border-dashed border-line px-6 py-10 text-center">
+              <p className="font-medium">Todavía no tienes alumnos.</p>
+              <p className="mt-1 text-sm text-muted">Crea un enlace de invitación y mándaselo por WhatsApp o correo.</p>
+            </div>
           )}
         </section>
         <InviteForm />
