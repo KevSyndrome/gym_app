@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/server";
@@ -22,7 +23,11 @@ export async function inviteStudent(_prev: InviteState, formData: FormData): Pro
   if (!parsed.success) return { error: "Revisa el nombre y el correo." };
   const { email, full_name } = parsed.data;
 
-  const { data, error } = await createAdminClient().auth.admin.inviteUserByEmail(email);
+  // Next ya valida que Origin coincida con el host en server actions; Supabase además lo exige en su lista de redirecciones.
+  const origin = (await headers()).get("origin");
+  const { data, error } = await createAdminClient().auth.admin.inviteUserByEmail(email, {
+    redirectTo: `${origin}/auth/accept`,
+  });
   if (error) {
     return { error: error.code === "email_exists" ? "Ese correo ya está registrado." : "No se pudo enviar la invitación." };
   }

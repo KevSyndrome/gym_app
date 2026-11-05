@@ -2,22 +2,23 @@
 
 App web (PWA) para un entrenador y sus alumnos: rutinas, horarios y progreso. Plan completo en [docs/PLAN.md](docs/PLAN.md).
 
-## Desarrollo local
+## Desarrollo
 
-Requisitos: Node 20+, podman (o Docker).
+Requisitos: Node 20+ y un proyecto de Supabase (plan free sirve). La base de datos corre en la nube:
+podman 6.1 no puede levantar Supabase local (bug con `PidsLimit: 0`).
 
 ```sh
 cd web
 npm install
-systemctl --user start podman.socket
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
-npx supabase start          # Postgres, Auth, Storage y Mailpit locales
-npx supabase status -o env  # copia las claves a .env.local (ver .env.example)
-npx supabase test db        # pruebas de permisos (RLS)
+cp .env.example .env.local      # URL y claves de Project Settings → API Keys
+npx supabase login
+npx supabase link --project-ref <ref>
+npx supabase db push --remote   # aplica supabase/migrations
+npx supabase config push        # auth: registro cerrado, contraseña >= 12, MFA
+npm run test:db                 # pruebas de permisos (RLS), no dejan datos
 node --env-file=.env.local scripts/create-trainer.mjs tu@correo.com "Tu nombre"
-npm run dev                 # http://127.0.0.1:3000
+npm run dev                     # http://127.0.0.1:3000
 ```
 
-Los correos de invitación locales llegan a Mailpit: http://127.0.0.1:54324
-
-`npx supabase stop` apaga todo; no queda nada corriendo.
+Con el correo integrado de Supabase las invitaciones solo llegan a miembros del equipo del proyecto
+y hay un límite de ~2 correos por hora. Para invitar alumnos reales hace falta SMTP propio (ver docs/PLAN.md).

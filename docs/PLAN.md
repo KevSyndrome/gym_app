@@ -22,6 +22,11 @@
 
 Planificado (`routine_items`) y realizado (`set_logs`) se guardan separados; el progreso es la comparación.
 
+## Pendientes de infraestructura
+- **SMTP propio** (Brevo, Resend, etc.): necesario para invitar alumnos reales y para personalizar el correo.
+  Al tenerlo, volver a la plantilla con `token_hash` verificada en servidor en vez del flujo con `#hash` (`/auth/accept`).
+- **Recuperar contraseña**: no existe todavía.
+
 ## Fases
 1. Auth, roles, invitación de alumnos.
 2. Ejercicios + rutinas + vista del alumno.
